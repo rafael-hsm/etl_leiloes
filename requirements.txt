@@ -4,21 +4,15 @@
 #
 #    pip-compile requirements.in
 #
-altair==5.3.0
-    # via streamlit
 attrs==23.2.0
     # via
     #   automat
-    #   jsonschema
-    #   referencing
     #   service-identity
     #   twisted
 automat==22.10.0
     # via twisted
 blinker==1.8.2
-    # via streamlit
-cachetools==5.3.3
-    # via streamlit
+    # via flask
 certifi==2024.2.2
     # via requests
 cffi==1.16.0
@@ -26,7 +20,7 @@ cffi==1.16.0
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
-    # via streamlit
+    # via flask
 constantly==23.10.4
     # via twisted
 cryptography==42.0.7
@@ -38,14 +32,20 @@ cssselect==1.2.0
     # via
     #   parsel
     #   scrapy
+dash==2.17.0
+    # via -r requirements.in
+dash-core-components==2.0.0
+    # via dash
+dash-html-components==2.0.0
+    # via dash
+dash-table==5.0.0
+    # via dash
 defusedxml==0.7.1
     # via scrapy
 filelock==3.14.0
     # via tldextract
-gitdb==4.0.11
-    # via gitpython
-gitpython==3.1.43
-    # via streamlit
+flask==3.0.3
+    # via dash
 hyperlink==21.0.0
     # via twisted
 idna==3.7
@@ -53,6 +53,8 @@ idna==3.7
     #   hyperlink
     #   requests
     #   tldextract
+importlib-metadata==7.1.0
+    # via dash
 incremental==22.10.0
     # via twisted
 itemadapter==0.9.0
@@ -61,58 +63,41 @@ itemadapter==0.9.0
     #   scrapy
 itemloaders==1.2.0
     # via scrapy
+itsdangerous==2.2.0
+    # via flask
 jinja2==3.1.4
-    # via
-    #   altair
-    #   pydeck
+    # via flask
 jmespath==1.0.1
     # via
     #   itemloaders
     #   parsel
-jsonschema==4.22.0
-    # via altair
-jsonschema-specifications==2023.12.1
-    # via jsonschema
 lxml==5.2.2
     # via
     #   parsel
     #   scrapy
-markdown-it-py==3.0.0
-    # via rich
 markupsafe==2.1.5
-    # via jinja2
-mdurl==0.1.2
-    # via markdown-it-py
-numpy==1.26.4
     # via
-    #   altair
-    #   pandas
-    #   pyarrow
-    #   pydeck
-    #   streamlit
+    #   jinja2
+    #   werkzeug
+nest-asyncio==1.6.0
+    # via dash
+numpy==1.26.4
+    # via pandas
 packaging==24.0
     # via
-    #   altair
     #   parsel
+    #   plotly
     #   scrapy
-    #   streamlit
 pandas==2.2.2
-    # via
-    #   -r requirements.in
-    #   altair
-    #   streamlit
+    # via -r requirements.in
 parsel==1.9.1
     # via
     #   itemloaders
     #   scrapy
-pillow==10.3.0
-    # via streamlit
+plotly==5.22.0
+    # via dash
 protego==0.3.1
     # via scrapy
-protobuf==4.25.3
-    # via streamlit
-pyarrow==16.1.0
-    # via streamlit
 pyasn1==0.6.0
     # via
     #   pyasn1-modules
@@ -121,12 +106,8 @@ pyasn1-modules==0.4.0
     # via service-identity
 pycparser==2.22
     # via cffi
-pydeck==0.9.1
-    # via streamlit
 pydispatcher==2.0.7
     # via scrapy
-pygments==2.18.0
-    # via rich
 pyopenssl==24.1.0
     # via scrapy
 python-dateutil==2.9.0.post0
@@ -135,23 +116,15 @@ pytz==2024.1
     # via pandas
 queuelib==1.7.0
     # via scrapy
-referencing==0.35.1
-    # via
-    #   jsonschema
-    #   jsonschema-specifications
 requests==2.32.2
     # via
+    #   dash
     #   requests-file
-    #   streamlit
     #   tldextract
 requests-file==2.1.0
     # via tldextract
-rich==13.7.1
-    # via streamlit
-rpds-py==0.18.1
-    # via
-    #   jsonschema
-    #   referencing
+retrying==1.3.4
+    # via dash
 scrapy==2.11.2
     # via -r requirements.in
 service-identity==24.1.0
@@ -160,26 +133,16 @@ six==1.16.0
     # via
     #   automat
     #   python-dateutil
-smmap==5.0.1
-    # via gitdb
-streamlit==1.34.0
-    # via -r requirements.in
+    #   retrying
 tenacity==8.3.0
-    # via streamlit
+    # via plotly
 tldextract==5.1.2
     # via scrapy
-toml==0.10.2
-    # via streamlit
-toolz==0.12.1
-    # via altair
-tornado==6.4
-    # via streamlit
 twisted==24.3.0
     # via scrapy
 typing-extensions==4.11.0
     # via
-    #   altair
-    #   streamlit
+    #   dash
     #   twisted
 tzdata==2024.1
     # via pandas
@@ -190,8 +153,12 @@ w3lib==2.1.2
     #   itemloaders
     #   parsel
     #   scrapy
-watchdog==4.0.0
-    # via streamlit
+werkzeug==3.0.3
+    # via
+    #   dash
+    #   flask
+zipp==3.18.2
+    # via importlib-metadata
 zope-interface==6.4.post0
     # via
     #   scrapy
