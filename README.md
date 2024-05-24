@@ -21,3 +21,5 @@ Para rodar o framework DASH tem que fazer isso dentro da pasta SRC
 ```bash
 python3 dashboard/app.py 
 ```
+
+Abra o navegador e acesse http://127.0.0.1:8050/ para visualizar o dashboard
