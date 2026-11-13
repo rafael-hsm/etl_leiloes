@@ -1,25 +1,64 @@
-# ETL - Leilão veícular
-## Extração, Transofrmação e Apresentação de dados Extraídos do site: [Parque dos Leilões](https://www.parquedosleiloes.com.br/)
-Projeto para extração de dados de leilão de veículos. NOS VALORES FINAIS NÃO FORAM CALCULADAS AS TAXAS DO LEILÃO.
+# ETL - Leilão Veicular
 
-## Para rodar o web scraping
-## AJUSTE IMPORTANTE NO SCRAPY
-![alt text](image.png)
+## Extração, Transformação e Apresentação de dados Extraídos do site: [Parque dos Leilões](https://www.parquedosleiloes.com.br/)
 
-```bash
-scrapy crawl parque_leiloes -O ../../data/data.json
+Projeto para extração de dados de leilão de veículos. **NOS VALORES FINAIS NÃO FORAM CALCULADAS AS TAXAS DO LEILÃO.**
+
+## Estrutura do Projeto
+
+```
+etl_leiloes/
+├── config/           # Configurações centralizadas
+├── data/             # Dados extraídos e banco SQLite
+├── docs/             # Documentação técnica
+├── scripts/          # Scripts utilitários
+├── src/
+│   ├── extract/      # Spiders Scrapy (extração)
+│   ├── transform/    # Scripts de transformação JSON → SQLite
+│   └── visualize/   # Dashboard Dash (visualização)
+├── tests/            # Suite de testes
+└── requirements.txt  # Dependências Python
 ```
 
-Para rodar a transformação do arquivo .json em sql
+## Instalação
 
 ```bash
-python3 transformacao/main.py
+# Executar script de setup
+bash setup.sh
+
+# Ou manualmente:
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-Para rodar o framework DASH tem que fazer isso dentro da pasta SRC
+## Uso
+
+### 1. Extração (Web Scraping)
 
 ```bash
-python3 dashboard/app.py 
+cd src
+scrapy crawl parque_leiloes -O ../data/data.json
 ```
 
-Abra o navegador e acesse http://127.0.0.1:8050/ para visualizar o dashboard
+### 2. Transformação (JSON → SQLite)
+
+```bash
+python3 src/transform/main.py
+```
+
+### 3. Visualização (Dashboard)
+
+```bash
+python3 src/visualize/app.py
+```
+
+Abra o navegador e acesse http://127.0.0.1:8050/ para visualizar o dashboard.
+
+## Funcionalidades do Dashboard
+
+- **Carros Mais Procurados**: Veículos com mais de 9 lances
+- **Carros Sem Lances**: Veículos que não receberam lances
+- **Melhores Negócios**: Oportunidades calculadas (valor de mercado - último lance)
+- **Filtros**: Filtrar por marca e modelo
+- **Tabela Completa**: Todos os dados com paginação e ordenação

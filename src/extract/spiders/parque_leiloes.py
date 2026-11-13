@@ -1,9 +1,17 @@
 import scrapy
+import sys
+from pathlib import Path
+
+# Adicionar o diretório config ao path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / 'config'))
+from settings import SPIDER_START_URL, SPIDER_ALLOWED_DOMAINS, SPIDER_CATEGORY, SPIDER_STATUS
+
+from ..items import EtlLeiloesVeicularItem
 
 class ParqueLeiloesSpider(scrapy.Spider):
     name = "parque_leiloes"
-    allowed_domains = ["www.parquedosleiloes.com.br"]
-    start_urls = ["https://www.parquedosleiloes.com.br"]
+    allowed_domains = SPIDER_ALLOWED_DOMAINS
+    start_urls = [SPIDER_START_URL]
 
     def __init__(self, *args, **kwargs):
         super(ParqueLeiloesSpider, self).__init__(*args, **kwargs)
@@ -21,8 +29,8 @@ class ParqueLeiloesSpider(scrapy.Spider):
 
             # Certifique-se de que todas as listas tenham o mesmo tamanho
             for i in range(len(categoria)):
-                # if categoria[i] == 'VEÍCULOS':  # Usar para percorer todos os leilões ativos ou não
-                if categoria[i] == 'VEÍCULOS' and status[i] == 'Lances online agora':  # Usar para percorer todos os leilões ativos
+                # if categoria[i] == SPIDER_CATEGORY:  # Usar para percorer todos os leilões ativos ou não
+                if categoria[i] == SPIDER_CATEGORY and status[i] == SPIDER_STATUS:  # Usar para percorer todos os leilões ativos
                     detalhes_url = detalhes[i]
                     self.logger.info(f"Seguindo para os detalhes do leilão: {detalhes_url}")
                     yield response.follow(detalhes_url, self.parse_detalhes_leilao)
@@ -80,21 +88,20 @@ class ParqueLeiloesSpider(scrapy.Spider):
             valor_ultimo_lance = lances.xpath(".//td[4]/text()").get(default='')
             total_lances = len(lances)
         
-        item = {
-            "titulo_lote": titulo_lote,
-            "url_lote": response.url,
-            "modelo": modelo,
-            "marca": marca,
-            "ano": ano,
-            "valor_mercado": valor_mercado,
-            "cor": cor,
-            "combustivel": combustivel,
-            "quilometragem": quilometragem,
-            "sinistro": sinistro,
-            "acessorios": acessorios,
-            "data último lance": data_ultimo_lance,
-            "valor último lance": valor_ultimo_lance,
-            "total lances": total_lances
-        }
+        item = EtlLeiloesVeicularItem()
+        item['titulo_lote'] = titulo_lote
+        item['url_lote'] = response.url
+        item['modelo'] = modelo
+        item['marca'] = marca
+        item['ano'] = ano
+        item['valor_mercado'] = valor_mercado
+        item['cor'] = cor
+        item['combustivel'] = combustivel
+        item['quilometragem'] = quilometragem
+        item['sinistro'] = sinistro
+        item['acessorios'] = acessorios
+        item['data_ultimo_lance'] = data_ultimo_lance
+        item['valor_ultimo_lance'] = valor_ultimo_lance
+        item['total_lances'] = total_lances
 
         yield item

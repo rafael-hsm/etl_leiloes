@@ -1,0 +1,38 @@
+"""Configurações do projeto ETL Leilões"""
+from .settings import (
+    ROOT_DIR,
+    DATA_DIR,
+    JSON_FILE_PATH,
+    SQLITE_DB_PATH,
+    SCRAPY_PROJECT_NAME,
+    SCRAPY_SPIDER_NAME,
+    DASH_HOST,
+    DASH_PORT,
+    DASH_DEBUG,
+    DB_TABLE_NAME,
+    LOG_LEVEL,
+    LOG_FORMAT,
+    SPIDER_START_URL,
+    SPIDER_ALLOWED_DOMAINS,
+    SPIDER_CATEGORY,
+    SPIDER_STATUS,
+)
+
+__all__ = [
+    'ROOT_DIR',
+    'DATA_DIR',
+    'JSON_FILE_PATH',
+    'SQLITE_DB_PATH',
+    'SCRAPY_PROJECT_NAME',
+    'SCRAPY_SPIDER_NAME',
+    'DASH_HOST',
+    'DASH_PORT',
+    'DASH_DEBUG',
+    'DB_TABLE_NAME',
+    'LOG_LEVEL',
+    'LOG_FORMAT',
+    'SPIDER_START_URL',
+    'SPIDER_ALLOWED_DOMAINS',
+    'SPIDER_CATEGORY',
+    'SPIDER_STATUS',
+]

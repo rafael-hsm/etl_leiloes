@@ -11,8 +11,8 @@ setup_linux() {
     # Install pip-tools
     pip install pip-tools
 
-    # Create requirements.in file
-    echo -e "scrapy\npandas\nstreamlit" > requirements.in
+    # Create requirements.in file with actual dependencies
+    echo -e "scrapy\npandas\ndash\ndash-bootstrap-components" > requirements.in
 
     # Compile requirements.txt
     pip-compile requirements.in
@@ -20,11 +20,17 @@ setup_linux() {
     # Install dependencies
     pip install -r requirements.txt
 
-    # Start Scrapy project
-    scrapy startproject etl_leiloes_veicular
-    cd etl_leiloes_veicular
+    # Create data directory if it doesn't exist
+    mkdir -p data
 
     echo "Setup completed."
+    echo ""
+    echo "Next steps:"
+    echo "1. Activate the virtual environment: source .venv/bin/activate"
+    echo "2. Run web scraping: cd src && scrapy crawl parque_leiloes -O ../../data/data.json"
+    echo "3. Run transformation: python3 src/transformacao/main.py"
+    echo "4. Run dashboard: cd src/dashboard && python3 app.py"
+    echo "5. Open browser at http://127.0.0.1:8050/"
 }
 
 # Function to set up the environment on Windows using WSL
@@ -44,8 +50,8 @@ setup_windows() {
     # Install pip-tools
     pip install pip-tools
 
-    # Create requirements.in file
-    echo -e "scrapy\npandas\nstreamlit" > requirements.in
+    # Create requirements.in file with actual dependencies
+    echo -e "scrapy\npandas\ndash\ndash-bootstrap-components" > requirements.in
 
     # Compile requirements.txt
     pip-compile requirements.in
@@ -53,11 +59,17 @@ setup_windows() {
     # Install dependencies
     pip install -r requirements.txt
 
-    # Start Scrapy project
-    scrapy startproject etl_leiloes_veicular
-    cd etl_leiloes_veicular
+    # Create data directory if it doesn't exist
+    mkdir -p data
 
     echo "Setup completed."
+    echo ""
+    echo "Next steps:"
+    echo "1. Activate the virtual environment: source .venv/bin/activate"
+    echo "2. Run web scraping: cd src && scrapy crawl parque_leiloes -O ../../data/data.json"
+    echo "3. Run transformation: python3 src/transformacao/main.py"
+    echo "4. Run dashboard: cd src/dashboard && python3 app.py"
+    echo "5. Open browser at http://127.0.0.1:8050/"
 }
 
 # Check the operating system and call the appropriate function

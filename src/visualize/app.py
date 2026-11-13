@@ -2,12 +2,25 @@ from dash import Dash, dcc, html, Input, Output, dash_table
 import dash_bootstrap_components as dbc
 import pandas as pd
 import sqlite3
+import sys
+import logging
+from pathlib import Path
+
+# Adicionar o diretório config ao path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'config'))
+from settings import SQLITE_DB_PATH, DB_TABLE_NAME, DASH_HOST, DASH_PORT, DASH_DEBUG, LOG_LEVEL, LOG_FORMAT
+
+# Configurar logging
+logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT)
+logger = logging.getLogger(__name__)
 
 # Função para conectar ao banco de dados SQLite e carregar os dados
 def load_data():
-    conn = sqlite3.connect('/home/r4f43l/pessoal/etl_leiloes/data/etl_leiloes.db')
-    df = pd.read_sql_query("SELECT * FROM parque_leiloes_items", conn)
+    logger.info(f"Carregando dados do banco: {SQLITE_DB_PATH}")
+    conn = sqlite3.connect(SQLITE_DB_PATH)
+    df = pd.read_sql_query(f"SELECT * FROM {DB_TABLE_NAME}", conn)
     conn.close()
+    logger.info(f"Carregados {len(df)} registros")
     return df
 
 df = load_data()
@@ -29,6 +42,9 @@ def make_clickable(val):
 df['valor_mercado_num'] = df['valor_mercado'].apply(extract_value)
 df['valor_ultimo_lance_num'] = df['valor último lance'].apply(extract_value)
 df['oportunidade'] = df['valor_mercado_num'] - df['valor_ultimo_lance_num']
+
+# Garantir que a coluna total lances existe e é numérica
+df['total lances'] = pd.to_numeric(df['total lances'], errors='coerce').fillna(0)
 
 # Aplicar a função make_clickable para a coluna url_lote
 df['url_lote'] = df['url_lote'].apply(make_clickable)
@@ -190,4 +206,5 @@ def update_table(selected_marcas, selected_modelos):
 
 # Executar o servidor
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    logger.info(f"Iniciando servidor Dash em http://{DASH_HOST}:{DASH_PORT}")
+    app.run_server(host=DASH_HOST, port=DASH_PORT, debug=DASH_DEBUG)
