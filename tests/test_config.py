@@ -15,6 +15,7 @@ def test_config_import():
         DASH_HOST,
         DASH_PORT,
         DB_TABLE_NAME,
+        EDITAIS_TABLE_NAME,
     )
     assert ROOT_DIR is not None
     assert DATA_DIR is not None
@@ -22,7 +23,8 @@ def test_config_import():
     assert SQLITE_DB_PATH is not None
     assert DASH_HOST == "127.0.0.1"
     assert DASH_PORT == 8050
-    assert DB_TABLE_NAME == "parque_leiloes_items"
+    assert DB_TABLE_NAME == "lotes"
+    assert EDITAIS_TABLE_NAME == "editais"
 
 def test_paths_exist():
     """Testa se os paths são objetos Path válidos"""

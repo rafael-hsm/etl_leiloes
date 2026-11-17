@@ -1,0 +1,17 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+
+# Dados gerados em runtime
+data/*.json
+data/*.db
+
+# Arquivos não necessários na imagem
+tests
+docs
+*.md
+image.png
+.github

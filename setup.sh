@@ -1,80 +1,91 @@
 #!/bin/bash
+#
+# Script de execução do projeto ETL Leilões
+#
+# Uso:
+#   ./setup.sh              Pipeline completo: setup (se necessário) + ETL + dashboard
+#   ./setup.sh --setup      Apenas instala as dependências
+#   ./setup.sh --etl        Executa extract + transform (sem dashboard)
+#   ./setup.sh --visualize  Executa apenas o dashboard
+#   ./setup.sh --run        ETL + dashboard (assume dependências instaladas)
+#
+set -e
 
-# Function to set up the environment on Linux
-setup_linux() {
-    echo "Setting up environment on Linux..."
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT_DIR"
 
-    # Create and activate virtual environment
-    python3 -m venv .venv
-    source .venv/bin/activate
+VENV_DIR=".venv"
+PYTHON="${PYTHON:-python3.13}"
 
-    # Install pip-tools
-    pip install pip-tools
-
-    # Create requirements.in file with actual dependencies
-    echo -e "scrapy\npandas\ndash\ndash-bootstrap-components" > requirements.in
-
-    # Compile requirements.txt
-    pip-compile requirements.in
-
-    # Install dependencies
-    pip install -r requirements.txt
-
-    # Create data directory if it doesn't exist
-    mkdir -p data
-
-    echo "Setup completed."
-    echo ""
-    echo "Next steps:"
-    echo "1. Activate the virtual environment: source .venv/bin/activate"
-    echo "2. Run web scraping: cd src && scrapy crawl parque_leiloes -O ../../data/data.json"
-    echo "3. Run transformation: python3 src/transformacao/main.py"
-    echo "4. Run dashboard: cd src/dashboard && python3 app.py"
-    echo "5. Open browser at http://127.0.0.1:8050/"
-}
-
-# Function to set up the environment on Windows using WSL
-setup_windows() {
-    echo "Setting up environment on Windows using WSL..."
-
-    # Install WSL if not already installed
-    if ! grep -q Microsoft /proc/version; then
-        echo "Please install WSL and retry."
+# Ativa o venv se existir
+activate_venv() {
+    if [ -f "$VENV_DIR/bin/activate" ]; then
+        # shellcheck disable=SC1091
+        source "$VENV_DIR/bin/activate"
+    else
+        echo "Erro: ambiente virtual não encontrado em $VENV_DIR"
+        echo "Execute: $PYTHON -m venv $VENV_DIR && source $VENV_DIR/bin/activate && pip install -r requirements.txt"
         exit 1
     fi
-
-    # Create and activate virtual environment
-    python3 -m venv .venv
-    source .venv/bin/activate
-
-    # Install pip-tools
-    pip install pip-tools
-
-    # Create requirements.in file with actual dependencies
-    echo -e "scrapy\npandas\ndash\ndash-bootstrap-components" > requirements.in
-
-    # Compile requirements.txt
-    pip-compile requirements.in
-
-    # Install dependencies
-    pip install -r requirements.txt
-
-    # Create data directory if it doesn't exist
-    mkdir -p data
-
-    echo "Setup completed."
-    echo ""
-    echo "Next steps:"
-    echo "1. Activate the virtual environment: source .venv/bin/activate"
-    echo "2. Run web scraping: cd src && scrapy crawl parque_leiloes -O ../../data/data.json"
-    echo "3. Run transformation: python3 src/transformacao/main.py"
-    echo "4. Run dashboard: cd src/dashboard && python3 app.py"
-    echo "5. Open browser at http://127.0.0.1:8050/"
 }
 
-# Check the operating system and call the appropriate function
-if grep -q Microsoft /proc/version; then
-    setup_windows
-else
-    setup_linux
-fi
+setup_env() {
+    echo "=== Configurando ambiente Python ==="
+
+    if [ ! -d "$VENV_DIR" ]; then
+        echo "Criando ambiente virtual com $PYTHON..."
+        $PYTHON -m venv "$VENV_DIR" || python3 -m venv "$VENV_DIR"
+    else
+        echo "Ambiente virtual já existe, pulando criação."
+    fi
+
+    activate_venv
+
+    echo "Instalando dependências..."
+    pip install --upgrade pip
+    pip install -r requirements.txt
+
+    mkdir -p data
+    echo "Setup concluído."
+}
+
+run_etl() {
+    echo "=== Executando ETL (extract + transform) ==="
+    activate_venv
+    python3 scripts/run_etl.py all
+}
+
+run_visualize() {
+    echo "=== Iniciando dashboard em http://127.0.0.1:8050/ ==="
+    activate_venv
+    python3 scripts/run_etl.py visualize
+}
+
+case "${1:-}" in
+    --setup)
+        setup_env
+        ;;
+    --etl)
+        run_etl
+        ;;
+    --visualize|--dashboard)
+        run_visualize
+        ;;
+    --run)
+        run_etl
+        run_visualize
+        ;;
+    ""|--all)
+        setup_env
+        run_etl
+        run_visualize
+        ;;
+    -h|--help)
+        sed -n '5,10p' "$0"
+        ;;
+    *)
+        echo "Opção desconhecida: $1"
+        echo "Use --help para ver as opções."
+        exit 1
+        ;;
+esac

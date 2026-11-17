@@ -5,9 +5,13 @@
 
 
 # useful for handling different item types with a single interface
+import logging
 from itemadapter import ItemAdapter
+
+logger = logging.getLogger(__name__)
 
 
 class EtlLeiloesVeicularPipeline:
     def process_item(self, item, spider):
+        logger.debug(f"Processando item: {item.get('titulo_lote', item)}")
         return item

@@ -19,7 +19,7 @@ Obrigado pelo interesse em contribuir com o projeto ETL Leilões!
 
 ## Padrões de Código
 
-- Use Python 3.10+
+- Use Python 3.13
 - Siga PEP 8
 - Adicione docstrings em funções importantes
 - Use configurações de `config/settings.py` em vez de hardcoded

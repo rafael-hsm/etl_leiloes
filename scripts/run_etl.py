@@ -6,63 +6,73 @@ Uso: python scripts/run_etl.py [extract|transform|visualize|all]
 import sys
 import subprocess
 import argparse
+import logging
 from pathlib import Path
+
+# Adicionar o diretório config ao path
+sys.path.insert(0, str(Path(__file__).parent.parent / 'config'))
+from settings import LOG_LEVEL, LOG_FORMAT
+
+# Configurar logging
+logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT)
+logger = logging.getLogger(__name__)
 
 def run_extract():
     """Executa a extração com Scrapy"""
-    print("=== Iniciando Extração (Scrapy) ===")
+    logger.info("=== Iniciando Extração (Scrapy) ===")
     src_dir = Path(__file__).parent.parent / "src"
     result = subprocess.run(
-        ["scrapy", "crawl", "parque_leiloes", "-O", "../data/data.json"],
+        [sys.executable, "-m", "scrapy", "crawl", "parque_leiloes",
+         "-O", "../data/data.json"],
         cwd=src_dir,
         capture_output=True,
         text=True
     )
-    print(result.stdout)
+    logger.info(result.stdout)
     if result.stderr:
-        print("ERROS:", result.stderr)
+        logger.error(result.stderr)
     if result.returncode == 0:
-        print("✓ Extração concluída com sucesso")
+        logger.info("✓ Extração concluída com sucesso")
     else:
-        print("✗ Extração falhou")
+        logger.error("✗ Extração falhou")
         sys.exit(1)
 
 def run_transform():
     """Executa a transformação JSON → SQLite"""
-    print("=== Iniciando Transformação ===")
+    logger.info("=== Iniciando Transformação ===")
     result = subprocess.run(
-        ["python3", "src/transform/main.py"],
+        [sys.executable, "src/transform/main.py"],
         capture_output=True,
         text=True
     )
-    print(result.stdout)
+    logger.info(result.stdout)
     if result.stderr:
-        print("ERROS:", result.stderr)
+        logger.error(result.stderr)
     if result.returncode == 0:
-        print("✓ Transformação concluída com sucesso")
+        logger.info("✓ Transformação concluída com sucesso")
     else:
-        print("✗ Transformação falhou")
+        logger.error("✗ Transformação falhou")
         sys.exit(1)
 
 def run_visualize():
     """Executa o dashboard Dash"""
-    print("=== Iniciando Dashboard ===")
-    print("Acesse http://127.0.0.1:8050/ no navegador")
+    logger.info("=== Iniciando Dashboard ===")
+    logger.info("Acesse http://127.0.0.1:8050/ no navegador")
     result = subprocess.run(
-        ["python3", "src/visualize/app.py"],
+        [sys.executable, "src/visualize/app.py"],
         text=True
     )
     if result.returncode != 0:
-        print("✗ Dashboard falhou")
+        logger.error("✗ Dashboard falhou")
         sys.exit(1)
 
 def run_all():
     """Executa o pipeline completo ETL"""
-    print("=== Executando Pipeline ETL Completo ===")
+    logger.info("=== Executando Pipeline ETL Completo ===")
     run_extract()
     run_transform()
-    print("\n=== Pipeline ETL concluído ===")
-    print("Para visualizar os dados, execute: python scripts/run_etl.py visualize")
+    logger.info("\n=== Pipeline ETL concluído ===")
+    logger.info("Para visualizar os dados, execute: python scripts/run_etl.py visualize")
 
 def main():
     parser = argparse.ArgumentParser(description="Executa o pipeline ETL de leilões")
